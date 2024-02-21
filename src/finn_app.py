@@ -1,12 +1,20 @@
-from openai import OpenAI
+#from openai import OpenAI
+from openai import AzureOpenAI
 import re
 import streamlit as st
 from prompts import get_system_prompt
+import time
 
-st.title("☃️ Frosty")
+st.title("👨‍💻 Finn")
 
 # Initialize the chat messages history
-client = OpenAI(api_key=st.secrets.OPENAI_API_KEY)
+client = AzureOpenAI(
+   azure_endpoint = "https://openai-asc-dev.openai.azure.com/", 
+    api_key="13a0000b5e89459da486d992d6048b74",
+    api_version="2024-02-15-preview")
+
+
+#client = AzureOpenAI(....)
 if "messages" not in st.session_state:
     # system prompt includes table information, rules, and prompts the LLM to produce
     # a welcome message to the user.
@@ -31,11 +39,17 @@ if st.session_state.messages[-1]["role"] != "assistant":
         response = ""
         resp_container = st.empty()
         for delta in client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt35turbo-osdemo",
             messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages],
             stream=True,
         ):
-            response += (delta.choices[0].delta.content or "")
+            #response += (delta.choices[0].delta.content or "")
+            #resp_container.markdown(response)
+            #time.sleep(5)
+            if delta.choices:  # Check if the choices list is not empty
+                response += (delta.choices[0].delta.content or "")
+            else:
+                response += ""
             resp_container.markdown(response)
 
         message = {"role": "assistant", "content": response}

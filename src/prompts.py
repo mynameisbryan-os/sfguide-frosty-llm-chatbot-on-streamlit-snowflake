@@ -1,22 +1,22 @@
 import streamlit as st
 
-SCHEMA_PATH = st.secrets.get("SCHEMA_PATH", "FROSTY_SAMPLE.CYBERSYN_FINANCIAL")
-QUALIFIED_TABLE_NAME = f"{SCHEMA_PATH}.FINANCIAL_ENTITY_ANNUAL_TIME_SERIES"
+SCHEMA_PATH = st.secrets.get("SCHEMA_PATH", "DM_REPORTS_EBIZ_SHOWCASE.GROSS_MARGIN")
+QUALIFIED_TABLE_NAME = f"{SCHEMA_PATH}.V_GROSS_MARGIN_TOTAL_REDUCED"
 TABLE_DESCRIPTION = """
-This table has various metrics for financial entities (also referred to as banks) since 1983.
-The user may describe the entities interchangeably as banks, financial institutions, or financial entities.
+This table outlines the financial performance of cloud-related projects in a tech company since 2023, detailing revenues ("Umsatz"), costs ("Kosten"), and profit margins ("Deckungsbeitrag") by project name, department, year, quarter, and month. It is a management tool used for evaluating the company's fiscal health and project efficiency within the fiscal year 2023.
 """
 # This query is optional if running Frosty on your own table, especially a wide table.
 # Since this is a deep table, it's useful to tell Frosty what variables are available.
 # Similarly, if you have a table with semi-structured data (like JSON), it could be used to provide hints on available keys.
 # If altering, you may also need to modify the formatting logic in get_table_context() below.
-METADATA_QUERY = f"SELECT VARIABLE_NAME, DEFINITION FROM {SCHEMA_PATH}.FINANCIAL_ENTITY_ATTRIBUTES_LIMITED;"
+#METADATA_QUERY = "USE DATABASE DM_REPORTS_EBIZ_SHOWCASE;SELECT COLUMN_NAME, ORDINAL_POSITION,IS_NULLABLE,DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'V_GROSS_MARGIN_TOTAL_REDUCED';"
+METADATA_QUERY = ""
 
 GEN_SQL = """
-You will be acting as an AI Snowflake SQL Expert named Frosty.
+You will be acting as an AI Snowflake SQL Expert named Finn.
 Your goal is to give correct, executable sql query to users.
-You will be replying to users who will be confused if you don't respond in the character of Frosty.
-You are given one table, the table name is in <tableName> tag, the columns are in <columns> tag.
+You will be replying to users who will be confused if you don't respond in the character of Finn.
+You are given one table, the table name is in <tableName> tag, the columns are in <columns> tag. Never print the tags in the responses.
 The user will ask questions, for each question you should respond and include a sql query based on the question and the table. 
 
 {context}
@@ -44,9 +44,10 @@ For each question from the user, make sure to include a query in your response.
 
 Now to get started, please briefly introduce yourself, describe the table at a high level, and share the available metrics in 2-3 sentences.
 Then provide 3 example questions using bullet points.
+
 """
 
-@st.cache_data(show_spinner="Loading Frosty's context...")
+@st.cache_data(show_spinner="Loading Finn's context...")
 def get_table_context(table_name: str, table_description: str, metadata_query: str = None):
     table = table_name.split(".")
     conn = st.connection("snowflake")
@@ -91,5 +92,5 @@ def get_system_prompt():
 
 # do `streamlit run prompts.py` to view the initial system prompt in a Streamlit app
 if __name__ == "__main__":
-    st.header("System prompt for Frosty")
+    st.header("System prompt for Finn")
     st.markdown(get_system_prompt())
