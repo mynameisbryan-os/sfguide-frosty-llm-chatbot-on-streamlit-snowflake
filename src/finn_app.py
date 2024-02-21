@@ -5,7 +5,7 @@ import streamlit as st
 from prompts import get_system_prompt
 import time
 
-st.title("👨‍💻 Finn")
+st.title("👨‍💻 FINN")
 
 # Initialize the chat messages history
 client = AzureOpenAI(
